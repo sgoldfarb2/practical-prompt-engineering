@@ -1,0 +1,96 @@
+/*
+  Developer Theme Palette (Serious / Commanding)
+  Core hues:
+    Accent (highlight): Electric Blue #2F81F7
+    Primary (brand / headers): Deep Navy #0F1E2E
+    Secondary (support / subtle UI): Slate #4B5F73
+  Neutrals Light: Background #F5F7FA, Lesson Panel #FFFFFF, Muted Border #D9E1EA
+  Neutrals Dark: Background #0D1117, Elevated #161B22, Muted Border #2A3541
+  Rationale: high contrast, low chroma neutrals, single strong accent, accessible text.
+*/
+ :root {
+  /* Brand / Core */
+  --primary: #0f1e2e;          /* Deep Navy */
+  --secondary: #4b5f73;        /* Slate */
+  --highlight: #a4b293;        /* Electric Blue Accent */
+
+  /* Text */
+  --lesson-text: #14181c;      /* Nearly-black for comfortable reading */
+  --text-header: var(--primary);
+  --text-main-headers: var(--highlight);
+  --text-links: #145cdd;       /* Slightly darker than accent for visited clarity */
+  --text-links-hover: #2f81f7;
+  --text-footer: #2a3947;
+
+  /* Backgrounds */
+  --bg-main: #f5f7fa;          /* App canvas */
+  --bg-dots: var(--highlight);
+  --bg-lesson: #ffffff;        /* Content panel */
+
+  /* Navigation Buttons */
+  --nav-buttons: var(--highlight);
+  --nav-buttons-text: #ffffff;
+  --nav-buttons-text-hover: #ffffff;
+
+  /* Chrome / UI Bits */
+  --corner-active: var(--highlight);
+  --corner-inactive: #e3e9ef;
+  --icons: var(--highlight);
+  --footer-icons: var(--highlight);
+
+  /* Emphasis Blocks */
+  --emphasized-bg: #e6f0ff;    /* Light blue tint */
+  --emphasized-border: #b3cbea; /* Soft border for callouts */
+
+  /* Utility */
+  --focus-ring: #2f81f7;
+  --border-subtle: #d9e1ea;
+}
+
+[data-theme="dark"] {
+  /* Brand / Core */
+  --primary: #d1e4ff;          /* Inverted readability of brand navy */
+  --secondary: #7c8fa3;        /* Muted slate */
+  --highlight: #2f81f7;        /* Keep accent consistent */
+
+  /* Text */
+  --lesson-text: #d8e2ec;      /* Light neutral text */
+  --text-header: var(--primary);
+  --text-main-headers: var(--highlight);
+  --text-links: #58a6ff;       /* GitHub-like link color */
+  --text-links-hover: #2f81f7;
+  --text-footer: #7c8fa3;
+
+  /* Backgrounds */
+  --bg-main: #0d1117;          /* Deep neutral (GitHub dark base) */
+  --bg-dots: var(--highlight);
+  --bg-lesson: #161b22;        /* Slight elevation */
+
+  /* Navigation Buttons */
+  --nav-buttons: var(--highlight);
+  --nav-buttons-text: #0d1117;
+  --nav-buttons-text-hover: #ffffff;
+
+  /* Chrome / UI Bits */
+  --corner-active: var(--highlight);
+  --corner-inactive: #2a3541;
+  --icons: var(--primary);
+  --footer-icons: var(--highlight);
+
+  /* Emphasis Blocks */
+  --emphasized-bg: #1d2835;    /* Subtle elevated panel */
+  --emphasized-border: #2e3d4c;
+
+  /* Utility */
+  --focus-ring: #2f81f7;
+  --border-subtle: #2a3541;
+}
+
+ .lesson-title { color: var(--highlight); }
+ .lesson-section-title { color: var(--primary); }
+ .terms { color: var(--highlight); }
+ li { color: var(--lesson-text); }
+
+/* Optional: Focus outline for accessibility */
+:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+

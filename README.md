@@ -1,0 +1,1 @@
+This is a companion repo for the Practical Prompt Engineering course with Frontend Masters.

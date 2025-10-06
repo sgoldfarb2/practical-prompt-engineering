@@ -6,7 +6,7 @@ The same way that using bullet points on slides can make it easier for people to
 
 It doesn't actually matter what delimiter you choose, you can even make up your own and use them, but just make sure that you are being consistent and clear.
 
-By using delimiters and XML tags, we can take large chunks of prompts and data, and break it up into easy to understand prompts for the model, the same way we look at a news article and see like there's a headline and a subheading and main content and some content with the research, but we understand their importance differently becasue of that visual hierarchy, and that is similar for LLMs.
+By using delimiters and XML tags, we can take large chunks of prompts and data, and break it up into easy to understand prompts for the model, the same way we look at a news article and see like there's a headline and a subheading and main content and some content with the research, but we understand their importance differently because of that visual hierarchy, and that is similar for LLMs.
 
 You should use these any time you have a complex prompt, so you'll likely use these often.
 

@@ -6,9 +6,9 @@ When you use words that describe who the model is role playing to be, you're alr
 
 Let's say you're struggling with the model not being able to handle a database example. If you add to the beginning of your prompt "you are a database expert", now suddenly the model is reaching out in its "brain" to all the data that has to do with databases because it has that pattern matching, so now its reaching out to parts of its training data the considers indexes, normalization, query optimization, things that when it was trained on data, it saw a lot associated with databases and database experts.
 
-Personas are of course great for tone and style, so maybe you don't need your GPT app to do some intense calculations, but you always want it to be pleasent and friendly and helpful instead of a no-nonsense consultant, adding that persona will help it adapt the right tone and style to the conversation.
+Personas are of course great for tone and style, so maybe you don't need your GPT app to do some intense calculations, but you always want it to be pleasant and friendly and helpful instead of a no-nonsense consultant, adding that persona will help it adapt the right tone and style to the conversation.
 
-If you give it a persona looking for a specific perspective it can be helpful, for example if you ask it to look at your codebase as a UX designer, you'll get a lot different answers than if you asked it to be a "security engineer". 
+If you give it a persona looking for a specific perspective it can be helpful, for example if you ask it to look at your codebase as a UX designer, you'll get a lot different answers than if you asked it to be a "security engineer".
 
 Some good use cases for personas:
 
@@ -24,9 +24,10 @@ Architecture: 'You are a solutions architect who considers scalability’”
 
 I personally like to use it for learning new things. Maybe the model can role play as a JavaScript tutor or an AWS Architect who is also really good at explaining things to a five year old.
 
-Adding too much to a persona can make the model's answers more rigid as well, so be careful making those *long* personas that aren't adding much anyway.
+Adding too much to a persona can make the model's answers more rigid as well, so be careful making those _long_ personas that aren't adding much anyway.
 
 When researchers analyzed model outputs, they found that personas primarily affect:
+
 - Vocabulary selection (technical terms vs. plain language)
 - Response structure (systematic vs. conversational)
 - Error checking behavior (thoroughness)
@@ -61,4 +62,3 @@ Our prompt library currently runs entirely in the browser with localStorage. We'
 
 Use your experience to make opinionated recommendations. Write as if you're presenting to a junior engineering team.
 ```
-

@@ -43,6 +43,12 @@ export default function Lessons({ sections }) {
               </div>
             </div>
           </div>
+          <div className="courseIcon">
+            <img
+              src={`${process.env.BASE_URL}/images/course-icon.png`}
+              alt="course icon"
+            />
+          </div>
         </div>
         {courseInfo.frontendMastersLink ? (
           <a href={courseInfo.frontendMastersLink} className="cta-btn">

@@ -4,22 +4,10 @@ import { getLesson, getLessons } from "../../../data/lesson";
 import getCourseConfig from "../../../data/course";
 import Corner from "../../../components/corner";
 import { Context } from "../../../context/headerContext";
-import createCopyCodeFunctionality from "../../../data/copyCode";
-import Link from "next/link";
 
 export default function LessonSlug({ post }) {
   const courseInfo = getCourseConfig();
   const [_, setHeader] = useContext(Context);
-
-  let nextLink, prevLink;
-  if (post.nextSlug) {
-    const shortNextSlug = post.nextSlug.replace(/^.*?\\.*?(?=\\)/, "");
-    nextLink = shortNextSlug.replace(/\\/g, "/");
-  }
-  if (post.prevSlug) {
-    const shortPrevSlug = post.prevSlug.replace(/^.*?\\.*?(?=\\)/, "");
-    prevLink = shortPrevSlug.replace(/\\/g, "/");
-  }
 
   useEffect(() => {
     setHeader({
@@ -27,11 +15,44 @@ export default function LessonSlug({ post }) {
       title: post.title,
       icon: post.icon,
     });
-    let elementsToClean = createCopyCodeFunctionality();
     return () => {
       setHeader({});
-      elementsToClean = [];
-    }
+    };
+  }, [post.section, post.title, post.icon, setHeader]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    let timeoutId;
+
+    document.addEventListener(
+      "click",
+      async (e) => {
+        const el = e.target;
+        if (!el.classList.contains("copy-btn")) return;
+
+        const oldDisplay = el.style.display;
+        el.style.display = "none";
+        const code = el.closest("pre").querySelector("code").innerText.trim();
+        el.style.display = oldDisplay;
+
+        try {
+          await navigator.clipboard.writeText(code);
+          el.textContent = "Copied!";
+        } catch {
+          el.textContent = "Error!";
+        }
+
+        timeoutId = setTimeout(() => {
+          el.textContent = "Copy";
+        }, 1500);
+      },
+      { signal: controller.signal }
+    );
+
+    return () => {
+      controller.abort();
+      clearTimeout(timeoutId);
+    };
   }, []);
 
   const title = post.title
@@ -66,15 +87,15 @@ export default function LessonSlug({ post }) {
             dangerouslySetInnerHTML={{ __html: post.html }}
           />
           <div className="lesson-links">
-            {prevLink ? (
-              <Link href={prevLink} className="prev">
+            {post.prevSlug ? (
+              <a href={post.prevSlug} className="prev">
                 ← Previous
-              </Link>
+              </a>
             ) : null}
-            {nextLink ? (
-              <Link href={nextLink} className="next">
+            {post.nextSlug ? (
+              <a href={post.nextSlug} className="next">
                 Next →
-              </Link>
+              </a>
             ) : null}
           </div>
         </div>

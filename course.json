@@ -10,7 +10,7 @@
     "linkedin": "sabrinagoldfarb",
     "github": "sgoldfarb2"
   },
-  "productionBaseUrl": "",
+  "productionBaseUrl": "/practical-prompt-engineering",
   "description": "Learn how to use Large Language Models (LLMs) like ChatGPT, Claude, and GitHub Copilot to build applications, generate code, and enhance your development workflow. This course covers prompt engineering techniques, best practices, and real-world examples to help you harness the power of AI in your projects.",
   "keywords": [
     "Prompt",

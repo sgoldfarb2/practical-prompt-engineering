@@ -532,7 +532,7 @@ code,
 pre code,
 pre code.hljs {
   background-color: var(--emphasized-bg);
-  color: #000;
+  color: var(--lesson-text);
   padding-right: 3rem;
 }
 

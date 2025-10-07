@@ -1,0 +1,709 @@
+# What Is Prompt Engineering
+
+# What is Prompt Engineering
+
+According to OpenAI - "**Prompt engineering** is the process of writing effective instructions for a model, such that it consistently generates content that meets your requirements.
+
+Because the content generated from a model is non-deterministic, prompting to get your desired output is a mix of art and science. However, you can apply techniques and best practices to get good results consistently."
+
+Prompting at its most basic is just using words to give instructions to a model. We can do this in a chat interface, like when we talk to ChatGPT or Claude, or we can use this in an API.
+
+The art (and science) of giving instructions to these models is prompting, and prompt engineering seeks to make prompts thats generate more predictable and accurate content.
+
+Utilizing the same model, you can expect to get a significantly better result using prompt engineering techniques.
+
+For those using LLMs in AI applications, whether it be for chatbots or to do complex work within the application, we can save significant LLM API costs with better prompts.
+
+GitHub posted a blog about developer productivity and speed using Copilot that can be found here: [Research: quantifying GitHub Copilot’s impact on developer productivity and happiness](https://github.blog/news-insights/research/research-quantifying-github-copilots-impact-on-developer-productivity-and-happiness/)
+
+But if we know what prompt engineering is, its important to also know what it is not.
+
+Prompt engineering isn't magic - its science! Prompting is not the only tool in our AI belt that we can use to get better, more accurate, more reliable results, BUT it is the most accessible tool and the easiest and quickest to implement changes to.
+
+Prompt engineering is also not a replacement for our critical thinking skills - we should use prompting to enhance those skills and to take mental load off of ourselves to do _more_ and do it _better_, but we still need to utilize our knowledge of development/best practices to ensure we are creating secure, production ready applications.
+
+=================
+
+# Introduction to LLMs
+
+# LLMs - A Brief Overview
+
+Before we can learn any prompting techniques, we need to understand a very basic version and amount of how LLMs work.
+
+I call this part: ***LLMs the Easy Parts***
+
+LLMs are pattern prediction machines that generate one token at a time (for now, don't worry about what a token is, we will call them words for now)...so one word at a time. This means that there is no "planning ahead" for LLMs, they are "thinking" when they are typing. They are kind of similar to the autocomplete on your phone, but MUCH better, which we will talk about *why* shortly.
+
+One other important thing to know first is that LLMs are non-deterministic.
+
+Something that is deterministic is a calculator. Every time you input the same thing (2+2) you're going to get the same output (4). LLMs are not like calculators, they are non-deterministic. This means that even if you and I input the same exact content into the same exact model at the same exact time...we'd still get different answers. How much those answers differ can vary widely! Sometimes they'll look very similar and maybe be a word or two apart, but other times they'll be completely different!
+
+You can try this for yourself to prove this - open 5 different chats with your favorite LLM (Claude, ChatGPT, Gemini, etc) and copy/paste the same prompt into each chat. You'll see the differences!
+
+Why do we care though?
+
+Being non-deterministic is important for us to know, because it means there is some *randomness* in responses, so we have to account for that and try and minimize that randomness. We also can get inaccuracies in this randomness, and want to minimize those.
+
+On to what I would call: ***LLMs the Medium Parts***
+
+Back in 2017 (which feels like forever ago!), Google published [Attention Is All You Need](https://arxiv.org/pdf/1706.03762) which was groundbreaking for the "Transformer Architecture". Before transformers, models were a lot like your phone's autocomplete, they could only track a few nearby words.
+
+The breakthrough here was the "attention" mechanism that let's models figure out in a much larger content what actually matters for pattern prediction. Without getting too into the new architecture, just know that before this, autocomplete could track a handful of words. If you think about using your phones autocomplete, it starts out really great, but after adding a few words, the quality of the guesses goes down exponentially.
+
+Now, with this new architecture, we could have hundreds, thousands of words being paid attention to. Models today have context windows (more on that later too) of even a million or more words (tokens technically).
+
+And briefly, what I call ***LLMs the Hard Parts***
+
+LLMs are neural networks, so they are inspired by how our brains work. Just like we can strengthen our neuron connections through practicing different things, LLMs adjust their *parameters* through training.
+
+Training happens in pre-training and fine-tuning sections, and all you need to understand about that is sometimes when using open source models, we can use the "base" model and that's the model that has gone through pre-training without fine tuning. The fine-tuning stage makes these LLMs helpful assistants, so when you're talking to ChatGPT or Claude, you're getting that question/answer and conversational format that comes from the fine-tuning phase.
+
+Something really cool to know? The entire model is just a parameter file and a few hundred lines of code for inference. That's all. The intelligence is in those billions of parameters. Pretty incredible, huh?
+
+=================
+
+# Temperature Top P Tokens and Context
+
+# Temperature, Top P, Tokens, and Context Windows
+
+**Temperature**: our way of changing a model's creativity or randomness
+
+Temperature controls how predictable the AI outputs will be. This is a range from 0 to 2. At temperature 0, the LLM will *always* pick the most likely next word (remember, they are pattern predictors, so their responses are just picking words based on computer science and statistics).
+
+When we raise the temperature, the AI might pick the 2nd most likely word, or the 100th most likely word. This can make our outputs much more creative, but can also add too much randomness and make them incoherent.
+
+This setting is *unavailable* to us when we are using ChatGPT or Claude in chat, or in Copilot or Cursor, but when we are building API applications, we have the opportunity to adjust this temperature. This is why we must understand what it is, because if you decide to create an AI application after this, you may need to adjust this setting!
+
+If you are writing an application focused on creativity, you might bump the temperature up to 1.4 (remember 2 is completely random and incoherent). But if you are running a medical AI application, you might dial it way down to .5. So keep this in mind when working with these APIs.
+
+**Top P**: Top P *sounds similar* to temperature, but it does something a bit different.
+
+In every word prediction, the percentage of words that can be predicted add up to 100%. So if I ask the color of the sky, "blue" might be 80% most likely, "gray" 15% most likely, and "orange" 5% most likely. We can see that these three options add up to 100%.
+
+But we can *change* this setting.
+
+If we are running a business and want to only consider the top 90% of options, we can change our top p to .9, and it will only consider the first 90% of token/word options. What does that mean for our sky example? That "orange" would no longer be considered, because its not in the top 90% most likely next words.
+
+This is another way we can control some of the randomness within our application, and we can use these together to make our application as fine-tuned towards or away from creativity as we want.
+
+Again, this is not something we can edit while just chatting with these models, but in AI applications, we *can* change these. And its important to understand really how LLMs are genuinely just predicting next tokens for our upcoming prompt techniques.
+
+**Tokens**: like words...but not.
+
+Okay, now I can finally stop saying words/tokens and just explain what I mean!
+
+Tokens are to the model what words are to humans. Tokens are roughly .75 words, but not always! Weirdly enough "JavaScript" might be one token but "javascript" might be two. We aren't here to figure out what is an exact token. All we need to understand about tokens is that they are the words/code/etc. that the model is being input or putting back out to us.
+
+**Context Windows**: how many tokens an LLM can "remember" at a time.
+
+So now that we know what a token is, let's talk about context and context windows.
+
+LLMs have no memory. I know, it seems like they do...so how does this work?
+
+Every time you enter an input to the LLM, it responds, and then that whole chat history is sent to the LLM again. So every time you send a message, you don't see it, but ALL your past messages are also being sent to the LLM. All your inputs, all the LLMs outputs (within that chat).
+
+So this is how LLMs "remember". By just...rereading the whole conversation over and over again.
+
+But at some point, the LLM is going to run out of "memory" and that's the context window - the amount of tokens that the LLM is able to remember.
+
+It's important to understand this because in these prompting techniques, we will be utilizing context windows and learning about when to open new chats and restart those windows.
+
+Its important to also know that *context windows can hit their limit without you knowing*.
+
+When you hit these limits, the oldest context (so your first inputs/outputs) drop off first. First in, first out. But the model will not tell you this happened! So if you're having a conversation and now the model doesn't remember what you said at first...like maybe..."this is the MOST IMPORTANT STRUCTURE IN MY APP", and you run past that context window, that context is gone. Lost. Without you knowing. While models now have pretty large context windows, this is still an important concept to understand as we move through our prompting techniques today.
+
+=================
+
+# Standard Prompt
+
+# Standard Prompts
+
+The first prompting technique is something you're *already* doing every time you use LLMs whether you know it or not!
+
+Standard prompts are just asking direct questions or giving direct instructions to your AI assistant. This is just the official term that's used in academic papers and research.
+
+The standard prompt isn't using any special formatting or techniques, just regular questions like "Write me a JavaScript function to sort an array and remove duplicates", or "Explain to me why thunder is so scary", or "When did the video game Apex Legends release?" Straightforward questions and commands. Nothing fancy! Try these for yourself in your favorite AI companion (I am personally a huge fan of using Claude in the browser for these!)
+
+But this is the basis and the first building block of every subsequent kind of prompt. And here's something important to consider - this works exactly like asking a friend a question. If you ask a vague question, you get a vague answer. If you ask a precise question, you get a precise answer. The model works with what you give it, same as any human you walk up to today and ask a question to. 
+
+Think about if you were to ask a coworker for help on your codebase. If you were to say to them "this doesn't work", they might guess at why and could be write but could be off because they have no *context* to what's wrong. But if you're like "hey, on line 56 when I passed in an empty array to this function, I got an error that says..." they can help you a lot better.
+
+As part of this course, we are building an HTML/CSS/JS local prompt library where we can write a prompt, send it to the AI of our choosing, and use the output code to simply "vibe code" this project.
+
+So now a note on this. As this is going to involve a lot of lines of code and prompts that adjust lines of code as we go, I suggest experimenting with Cursor, Copilot, or Claude Code for these prompts. You are welcome to use ChatGPT or Claude in the browser, but you'll have to copy/paste your code every time, which isn't convenient, more prone to errors and rate limits, and can take a lot of time.
+
+So to see an example of a standard prompt in writing code, let's ask our AI assistant to write some code for us:
+
+```
+Create a prompt library application that lets users save and delete prompts.
+
+Users should be able to:
+- Enter a title and content for their prompt
+- Save it to localStorage
+- See all their saved prompts displayed on the page
+- Delete prompts they no longer need
+
+Make it look clean and professional with HTML, CSS, and JavaScript.
+```
+
+Your output will be different than mine (remember models are non-deterministic!) but depending on the model and provider, it may be very different than what I generated.
+
+One thing you may notice when doing this is often your assistant will add additional features it wants to. It makes a lot of *assumptions* which introduces a lot more *randomness* than we want if we are going to use these models to generate code for us.
+
+So, as an FYI, I deleted this scaffold for the project and will regenerate it in the next section.
+
+But we can see these standard prompts already are pretty powerful! Now, let's add some technique to our prompts.
+
+=================
+
+# Zero Shot
+
+# Zero Shot
+
+Zero-shot prompting is our baseline, and its going to look very similar to our standard prompt.
+
+Zero-shot prompting means we are asking the model to do something without providing any examples of the task. We are relying on the model's training data to help us figure out what we want.
+
+So what's the difference between this and the "standard prompt"?
+
+All zero-shot prompts are standard prompts, but not all standard prompts are truly zero-shot. 
+
+Don't get too far into the weeds trying to figure out the difference, just know zero-shot prompts don't provide examples, and you probably write these types of prompts without knowing it.
+
+When do we want to use these?
+
+We want to use zero shot prompting on anything simple that the model is going to be able to do without examples. When we are asking these models to solve basic tasks for us, whether they are tasks that are writing code, proofreading, maybe we made an AI application and want to evaluate customer feedback, anything that the model will have seen plenty of in its training data, we can try a zero-shot prompt for.
+
+An example of a zero-shot prompt:
+```
+Classify the customer rating into neutral, negative or positive.
+
+Text: The product was okay. It worked, but wasn't the easiest to understand how to use.
+Sentiment:
+```
+
+We can see how this could be helpful in AI applications. We don't need to use tons of tokens for this generalized and very "smart" LLM to classify customer sentiment.
+
+Now, use the zero-shot prompt below in a *new chat* (remember, our whole conversation history is reread every time we send a new note) to build a new scaffold with save/delete functionality for our prompt library project.
+
+```
+Create a prompt library application in HTML, CSS, and JavaScript.
+
+Create an HTML page with a form containing fields for the prompt title and content
+
+Add a save prompt button that saves to localStorage
+
+Display saved prompts in cards
+
+Each prompt card should show the title, a content preview of a few words, and a delete button
+
+Deleting should remove the prompt from localStorage and update the display
+
+Style it with CSS to look clean and modern with a developer theme
+
+Include all HTML structure, CSS styling, and JavaScript functionality in their own files, but that can be run immediately and includes no other features.
+```
+
+=================
+
+# One Shot
+
+# One Shot Prompting
+
+Another common prompting technique is called one-shot, which really simply means providing one example.
+
+So we had zero-shot (zero examples) and now one-shot (one example).
+
+This technique really leverages the model's ability to generalize from minimal data. Think of this as something that you might do with a coworker while pair programming or in a code review. You might see some code and be like...well actually if you look at this prior example, you can see how we did this and now make this new thing based on that prior art.
+
+One shot is really efficient because you aren't trying to think of every edge case and every possibility, but its also going to be more reliable than hoping zero-shot understands your full intent.
+
+Simple patterns are great for one shot prompts, where one example clearly shows what we are looking for. Also if you're working with straightforward transformations or if you're trying to work quickly and don't have the time to work through a bunch of really good examples, still providing an example will be helpful to the model over providing nothing.
+
+> Note:
+> - choose your example carefully because it sets the pattern
+> - make your example the majority representative, don't pick an edge case
+> - include all elements you want in your output
+> - combine with explicit instructions for any additionally needed clarity
+> - don't overcomplicate your example to cover every case, the model will generalize that pattern
+
+An example of a one-shot prompt:
+```
+Write an engaging introduction for a blog post about remote work productivity.
+
+Example:
+Topic: Benefits of morning exercise
+Introduction: "Picture this: It's 6 AM, your alarm goes off, and instead of hitting snooze, you lace up your sneakers. Sound impossible? Here's the thing—those who exercise before breakfast report 23% higher energy levels throughout their workday. But the real secret isn't just the exercise itself; it's what happens to your brain chemistry in those precious morning hours."
+
+Now write an introduction for: Remote work productivity tips
+```
+
+Something we can add to our prompt library is a rating feature, with stars from 1-5. Here is an example of a one-shot prompt to get the model to design that new feature:
+
+> Note: you will likely need to prompt the model again to build the feature after sending this prompt. This prompt uses an example to help the model "architect" this feature. Go through what it wants to build, prompt to make any adjustments you see fit, and then prompt the model to "build this feature" (or however you want to word it!)
+
+```
+You are helping develop a prompt library application. Here's an example of how to analyze and implement a new feature:
+
+**EXAMPLE:** Feature Request: "Add a favorites/bookmarking system"
+
+Implementation Plan:
+
+1. **User Story**: As a user, I want to mark prompts as favorites so I can quickly access my most-used prompts without scrolling through the entire library.
+2. **Technical Requirements**:
+    - Add a heart/bookmark icon to each prompt card
+    - Store favorite status in localStorage or database
+    - Create a filter to show only favorited prompts
+    - Visual indicator when a prompt is favorited (filled vs outlined icon)
+3. **Code Structure**:
+
+javascript
+// Data model update
+prompt = {
+  id: 'prompt-123',
+  title: 'Marketing Email Generator',
+  content: '...',
+  isFavorite: false,  // New field
+  createdAt: '2024-01-15',
+  rating: 4.5
+}
+
+// Toggle favorite function
+function toggleFavorite(promptId) {
+  const prompt = prompts.find(p => p.id === promptId);
+  prompt.isFavorite = !prompt.isFavorite;
+  saveToStorage(prompts);
+  updateUI();
+}
+
+4. **UI/UX Considerations**:
+    - Place favorite icon in consistent location (top-right of card)
+    - Use intuitive icons (heart or star)
+    - Provide visual feedback on click (animation/color change)
+    - Add "Favorites" filter tab in navigation
+
+---
+
+**YOUR TASK:** Analyze the following feature request using the EXACT same format as the example above (User Story, Technical Requirements with bullet points, Code Structure with JavaScript examples, and UI/UX Considerations).
+
+Feature Request: "Add a 5-star rating component to rate prompt effectiveness"
+```
+
+=================
+
+# Few Shot
+
+# Few Shot Prompting
+
+Now we can assume that if zero-shot prompting was zero examples, and one-shot prompting was one example, then few shot prompting is going to mean two or more examples.
+
+And why would we want to do this?
+
+[Language Models are Few-Shot Learners](https://arxiv.org/pdf/2005.14165) researched these prompts and proved that few-shot examples dramatically improved LLM performance. Also in the paper, there was evidence that while zero shot and one shot got more effective with model size, few shot seemed to increase more rapidly in accuracy as models got larger. Its definitely worth a read, or at least check out the graphs on how much better prompting can get with zero, one, and a few shots.
+
+So when should we use few-shot prompting?
+
+When we have complex patterns with multiple variations, classification tasks with multiple categories, when we want to standardize formats across a diverse array of inputs, when we have domain specific tasks that require context, and when consistency across varied outputs is really important.
+
+> Note:
+> - diversity in examples matters
+> - include edge cases and failure cases
+> - keep examples concise but complete
+> - test in a few different chats with a few different number of examples to find what works best
+
+An example of few-shot prompting:
+```
+Analyze the business decision with the requested level of detail.
+
+Decision: Opening a new store location
+Analysis Level: Quick take
+Response: New location appears viable given foot traffic data and competitor absence, though initial investment is substantial.
+
+Decision: Switching software providers
+Analysis Level: Standard review
+Response: Migration offers long-term cost savings of 30% and better feature set. However, switching requires 2-month transition period with potential disruption to operations. Staff training needed but vendor provides support. Recommend phased rollout starting with non-critical systems.
+
+Decision: Launching a new product line
+Analysis Level: Comprehensive assessment
+Response: Market analysis indicates strong demand with 40% of surveyed customers expressing interest. Competitive landscape shows opportunity for differentiation through our unique manufacturing process. Financial projections suggest break-even within 18 months, with 25% profit margins by year 3. Risk factors include supply chain dependencies on single vendor and need for $2M initial investment. Manufacturing capacity exists but requires equipment upgrades. Marketing strategy should emphasize sustainability angle based on focus group feedback. Recommend soft launch in Q2 with limited geographic rollout, expanding nationally in Q4 based on performance metrics. Success criteria: 10,000 units sold in first quarter, customer satisfaction above 85%, and return rate below 5%.
+
+Decision: Implementing remote work policy
+Analysis Level: Standard review
+Response:
+```
+
+For our prompt library, we want to add a "notes" feature that allows us to add notes to our prompts, in case we want to say "worked better with this model" or add the technique we used or something like that!
+
+ > Note: you will likely need to prompt the model again to build the feature after sending this prompt. This prompt uses an example to help the model "architect" this feature. Go through what it wants to build, prompt to make any adjustments you see fit, and then prompt the model to "build this feature" (or however you want to word it!)
+
+```
+I need you to create a prompt for implementing a new feature. Here are examples of effective feature implementation prompts:
+
+**EXAMPLE 1: Save/Delete Functionality Prompt**
+Create a save and delete system for a prompt library application with the following requirements:
+
+Technical Specifications:
+- Save button that persists prompts to localStorage
+- Delete button with confirmation dialog before removal
+- Visual feedback on successful save (green checkmark animation)
+- Trash icon with hover effect for delete action
+- Auto-save indicator when changes are detected
+
+Provide complete HTML, CSS, and JavaScript with:
+1. Semantic HTML with data attributes for prompt IDs
+2. CSS animations for save confirmation and delete hover states
+3. JavaScript with proper event delegation for dynamically added prompts
+4. localStorage integration with JSON serialization
+
+The system should work with this data structure:
+const prompts = [
+  { id: 'prompt-001', title: "Blog Writer", content: "Generate blog posts...", savedAt: Date.now() }
+];
+
+Include error handling for localStorage quota exceeded and implement a "Recently Deleted" temporary storage (up to 5 items).
+
+**EXAMPLE 2: Star Rating Component Prompt**
+Build a 5-star rating system for rating prompt effectiveness with these specifications:
+
+Core Requirements:
+- Interactive 5-star display (click to rate, hover to preview)
+- Half-star precision (4.5 stars possible)
+- Shows average rating and total number of ratings
+- Updates immediately without page refresh
+- Allows users to change their rating
+
+Implementation Details:
+- SVG stars for crisp display at any size
+- Gold fill for rated, gray outline for unrated
+- Smooth hover animations (scale and glow effect)
+- Display format: "4.5 ★ (23 ratings)"
+
+Deliver production-ready code including:
+1. HTML with accessible ARIA labels for screen readers
+2. CSS with star animations and responsive sizing
+3. JavaScript for rating logic and state management
+4. Comments explaining calculation methods
+
+Data model to support:
+{
+  promptId: 'prompt-001',
+  ratings: [5, 4, 5, 3, 5], // Array of all ratings
+  userRating: 4, // Current user's rating
+  averageRating: 4.4
+}
+
+**YOUR TASK:** Based on the examples above, create a detailed prompt for building a "notes section" feature where users can add, edit, save, and delete notes for each prompt in the library.
+
+The prompt should follow the pattern shown in the examples:
+
+- Clear feature description
+- Specific technical requirements
+- Implementation details
+- Expected deliverables
+- Data structure/integration notes
+
+Keep it as simple as possible to create a working notes section with only the features mentioned in your task.
+```
+
+=================
+
+# Context Placement
+
+# Context Placement
+
+Something else we need to consider, especially as context windows get larger and applications get larger (and chats get longer) is context placement.
+
+[Lost in the Middle: How Language Models Use Long Contexts](https://arxiv.org/pdf/2307.03172) analyzed the performance of language models with multi-document questions and also key-value retrievals. Huh?
+
+Basically, they gave the models a ton of documents and asked it questions about some of the content within the documents, and moved where the document with the relevant information was. Sometimes it was at the beginning, other times in the middle, other times at the end.
+
+What they found was that even though these models are able to get bigger and bigger context windows and handle more tokens, the LLMs did not make use of information in the long input contexts.
+
+In fact, performance for the LLMs were highest when the information was placed at the beginning of the context and at the end of the context (though the beginning _was_ better than at the end).
+
+But here's where things got really weird.
+
+Information that was in the middle of many documents not only had worse performance than when the information was at the beginning or the end of the document, but actually the model often _performed worse_ than its performance when predicting the answer with _no documents_.
+
+This means that even though these models have bigger and bigger context windows that we are able to use, that means that information we give in context in the middle is sometimes literally getting lost to the model in all the context.
+
+So this means when we have really important conversations, its really important that we place the most critical information to our context first, and any important additional information last to make best use of the model, and what belongs in the middle is the less important stuff.
+
+This also means when your chats get really long (or your customer's chats), context may not only "fall off" if you fill the context window, but context in the middle might also get "lost" to the model.
+
+Basically, this shows us that we need to start new chats when possible. Keep context small when you can. Position context at the front if its incredibly important, and if something else important comes up, add it to the end.
+
+=================
+
+# Structured Output
+
+Structured Output
+
+Structured output is really about getting consistent and usable formats the first time. And while this may feel and seem like something that's more work for us and takes more time, if you think about the amount of time you've spent copy/pasting and reformatting your output and you do that a few times a day, suddenly spending a few minutes to make a structured output prompt can save you hours.
+
+This is also really important when it comes to production code, especially if you're using LLMs to generate code or generate content that you are passing down to other parts of your application. You aren't going to build into an AI application that maybe you'll get a response in paragraphs, maybe JSON, maybe bullet points, and do this for each of those. And even if you do, you'll end up getting some mixture that breaks.
+
+So when should we use this?
+
+Any time you need a specific format, any time you're generating multiple similar items like functions, tests, docs, data, etc. Maybe if you want to extract structured data from something that is unstructured like user feedback that was not used in the past, but now you want to present on your site.
+
+Honestly also just use this when you're tired of reformatting your responses!
+
+An example of structured output:
+```
+Extract the meeting details from this email.
+
+Format like this:
+Date: [date]
+Time: [time]
+Location: [location]
+Topic: [topic]
+
+Email: "Let's meet tomorrow at 2 PM in Conference Room B to discuss the Q4 budget."
+```
+
+
+And one that might be a helpful type of structured output to use in applications:
+```
+Convert this error into JSON. Return ONLY the JSON, no explanation.
+
+"Error 404 occurred at 3:45 PM when trying to access /users/profile endpoint"
+```
+
+Now that we've seen how great structured output can be, let's use an example of a structured output prompt to create a metadata tracking system to track our model used, the date, and even a token estimator:
+
+```
+Create a metadata tracking system for a prompt journal web application that is attached to our prompts in our prompt library.
+
+FUNCTION SPECIFICATIONS:
+1. trackModel(modelName: string, content: string): MetadataObject
+   - Accept any non-empty string for modelName
+   - Auto-generate createdAt timestamp
+   - Estimate tokens from content
+   
+2. updateTimestamps(metadata: MetadataObject): MetadataObject
+   - Update the updatedAt field
+   - Validate updatedAt >= createdAt
+   
+3. estimateTokens(text: string, isCode: boolean): TokenEstimate
+   - Base calculation: min = 0.75 * word_count, max = 0.25 * character_count  
+   - If isCode=true, multiply both by 1.3
+   - Confidence: 'high' if <1000 tokens, 'medium' if 1000-5000, 'low' if >5000
+
+VALIDATION RULES:
+- All dates must be valid ISO 8601 strings (YYYY-MM-DDTHH:mm:ss.sssZ)
+- Model name must be non-empty string, max 100 characters
+- Throw errors for invalid inputs with descriptive messages
+
+OUTPUT SCHEMA:
+{
+  model: string,
+  createdAt: string (ISO 8601),
+  updatedAt: string (ISO 8601),
+  tokenEstimate: {
+    min: number,
+    max: number,
+    confidence: 'high' | 'medium' | 'low'
+  }
+}
+
+VISUAL DISPLAY:
+Create an HTML/CSS component that adds and displays metadata in the prompt card:
+- Model name
+- Timestamps in human-readable format
+- Token estimate with color-coded confidence (green/yellow/red)
+- Sort by createdAt descending
+
+CONSTRAINTS:
+- Pure JavaScript only (no external libraries)
+- Must work in browser environment
+- Include try/catch error handling
+```
+
+=================
+
+# Chain of Thought
+
+# Chain of Thought (CoT)
+
+There was a study [Large Language Models are Zero-Shot Reasoners](https://arxiv.org/pdf/2205.11916) and it looked at the accuracy of LLMs with different prompts.
+
+There has been research on the phrase "let's think step by step" added to prompts and this study looked specifically at this "zero-shot chain of thought prompt" performance on a diverse set of reasoning tasks including arithmetic and logical reasoning tasks without any few shot examples.
+
+Amazingly, accuracy on the multi-arithmetic problems went from 17.7% to 78.7%.
+
+Something else amazing about this "chain of thought" reasoning is that the reasoning performance of the models got better as the models got larger as well.
+
+Its important to really appreciate just this simple five word addition to our prompts because let's think step by step is versatile and task-agnostic, you can use it for basically anything...code generation, math problems, complex reasoning, etc.
+
+I'd highly encourage reading the paper to understand more of why this works.
+
+Here is an example of using CoT reasoning in a prompt:
+```
+Can penguins fly?
+Think through this step by step.
+```
+
+For our prompt library, let's build something complex, like the ability to import and export our prompts. Since we are only saving them currently to localStorage, they are going to disappear on us, so if we build an export system to JSON, then we can download the JSON and we can import it the next time we load our prompt library, and we can just have it all back without worrying about where those files need to live or adding a database or anything like that, so let's use chain of thought prompting to build this import/export feature as our last big feature to this project.
+
+```
+Let's build a complete export/import system step by step.
+
+Step 1: First, analyze what data we need to export:
+- All prompts with their metadata
+
+Step 2: Design the export JSON schema that includes:
+- Version number for future compatibility
+- Export timestamp
+- Statistics (total prompts, average rating, most used model)
+- Complete prompts array
+
+Step 3: Create the export function that:
+- Gathers all data from localStorage
+- Validates data integrity
+- Creates a blob and triggers download with timestamp
+
+Step 4: Create the import function that:
+- Reads the uploaded file
+- Validates the JSON structure and version
+- Checks for duplicate IDs
+- Merges or replaces existing data based on user choice
+
+Step 5: Add error recovery:
+- Backup existing data before import
+- Rollback on failure
+- Provide detailed error messages
+
+Add the import and export buttons and merge conflict resolution prompts
+
+Implement this complete system with all steps. Think step by step.
+```
+
+=================
+
+# Delimiters
+
+# Delimiters/XML
+
+If you don't know what a delimiter is, we use them every day...commas, periods. You use them in code to separate items in your arrays. They are at its simplest just like a boundary between a section of text. If you've seen markdown formatting, that's a great use of delimiters.
+
+The same way that using bullet points on slides can make it easier for people to digest the information when you teach, LLMs can really benefit from having clear sections that the model can distinguish.
+
+It doesn't actually matter what delimiter you choose, you can even make up your own and use them, but just make sure that you are being consistent and clear.
+
+By using delimiters and XML tags, we can take large chunks of prompts and data, and break it up into easy to understand prompts for the model, the same way we look at a news article and see like there's a headline and a subheading and main content and some content with the research, but we understand their importance differently because of that visual hierarchy, and that is similar for LLMs.
+
+You should use these any time you have a complex prompt, so you'll likely use these often.
+
+Let's say we wanted to learn how to turn our application into a live production app, but we don't really know how and what considerations we need to keep in mind.
+
+Let's use delimiters to ask our LLM to help us plan what those next steps would be:
+
+```
+I need to research how existing tools handle prompt management and version control to inform architecture decisions for a prompt library I'm building and hoping to move to production. Please research and analyze different approaches using this structure:
+
+<research_area>
+<topic>Prompt Management Solutions</topic>
+<questions>
+- What tools currently exist for prompt library management?
+</questions>
+</research_area>
+
+<research_area>
+<topic>Collaboration Features</topic>
+<questions>
+- How do teams share Postman collections or Insomnia workspaces?
+- What permission models exist in developer tools?
+</questions>
+</research_area>
+
+<research_area>
+<topic>Technical Implementation Details</topic>
+<questions>
+- What databases do similar tools use (research from their engineering blogs)?
+- How do they handle search at scale?
+- What's their approach to data export/import?
+- How do they prevent abuse and implement rate limiting?
+</questions>
+</research_area>
+
+For each research area:
+1. Find concrete examples from real products
+2. Identify patterns across successful tools
+3. Highlight common failures or user complaints
+4. Estimate implementation complexity
+
+Then synthesize this into:
+- A competitive analysis matrix
+- Recommended features for our MVP vs future releases
+- Technical decisions informed by market research
+```
+
+=================
+
+# Personas
+
+# Personas
+
+A lot of people think that they make the model smarter by providing it with a persona, and that's not actually what is happening.
+
+When you use words that describe who the model is role playing to be, you're already steering it in the direction of certain data that it has been trained on.
+
+Let's say you're struggling with the model not being able to handle a database example. If you add to the beginning of your prompt "you are a database expert", now suddenly the model is reaching out in its "brain" to all the data that has to do with databases because it has that pattern matching, so now its reaching out to parts of its training data the considers indexes, normalization, query optimization, things that when it was trained on data, it saw a lot associated with databases and database experts.
+
+Personas are of course great for tone and style, so maybe you don't need your GPT app to do some intense calculations, but you always want it to be pleasant and friendly and helpful instead of a no-nonsense consultant, adding that persona will help it adapt the right tone and style to the conversation.
+
+If you give it a persona looking for a specific perspective it can be helpful, for example if you ask it to look at your codebase as a UX designer, you'll get a lot different answers than if you asked it to be a "security engineer".
+
+Some good use cases for personas:
+
+```
+Code review: 'You are a senior engineer focused on security and performance'
+
+Documentation: 'You are a technical writer who prioritizes clarity for beginners'
+
+Debugging: 'You are a systematic debugger who checks assumptions'
+
+Architecture: 'You are a solutions architect who considers scalability’”
+```
+
+I personally like to use it for learning new things. Maybe the model can role play as a JavaScript tutor or an AWS Architect who is also really good at explaining things to a five year old.
+
+Adding too much to a persona can make the model's answers more rigid as well, so be careful making those _long_ personas that aren't adding much anyway.
+
+When researchers analyzed model outputs, they found that personas primarily affect:
+
+- Vocabulary selection (technical terms vs. plain language)
+- Response structure (systematic vs. conversational)
+- Error checking behavior (thoroughness)
+- Confidence in assertions
+
+> Note: you can change personas mid-conversation to get different viewpoints on the same problem.
+
+An example of this if we were doing more research into getting our application live:
+
+```
+You are a Senior Engineer with experience building startups from zero to MVP.
+
+Our prompt library currently runs entirely in the browser with localStorage. We're considering making it a production-ready tool that teams can use. Create a comprehensive technical specification that includes:
+
+1. **System Architecture Document** that covers:
+   - Data persistence strategy (evaluate PostgreSQL vs DynamoDB vs Firebase)
+   - Authentication approach (OAuth, magic links, or API keys)
+   - Real-time collaboration requirements
+   - Rate limiting and abuse prevention
+   - Search infrastructure (full-text search vs vector embeddings)
+
+2. **API Design Specification** with:
+   - RESTful endpoints vs GraphQL evaluation
+   - Versioning strategy
+   - Pagination approach for large prompt libraries
+   - Webhook events for integrations
+
+3. **Scaling Projections**:
+   - Start with 100 users → path to 1M users
+   - Cost per user at different tiers
+   - Performance benchmarks to maintain
+
+Use your experience to make opinionated recommendations. Write as if you're presenting to a junior engineering team.
+```

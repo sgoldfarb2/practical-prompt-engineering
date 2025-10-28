@@ -1,0 +1,13 @@
+order,sectionTitle,lessonTitle,slug,sectionIcon,filePath,description
+01A,Introduction,What Is Prompt Engineering,introduction/what-is-prompt-engineering,info-circle,/lessons/introduction/what-is-prompt-engineering,""
+01B,Introduction,Introduction to LLMs,introduction/introduction-to-LLMs,info-circle,/lessons/introduction/introduction-to-LLMs,""
+01C,Introduction,Temperature Top P Tokens and Context,introduction/temperature-top-p-tokens-and-context,info-circle,/lessons/introduction/temperature-top-p-tokens-and-context,""
+02A,Core Prompting Techniques,Standard Prompt,core-prompting-techniques/standard-prompt,info-circle,/lessons/core-prompting-techniques/standard-prompt,""
+02B,Core Prompting Techniques,Zero Shot,core-prompting-techniques/zero-shot,info-circle,/lessons/core-prompting-techniques/zero-shot,""
+02C,Core Prompting Techniques,One Shot,core-prompting-techniques/one-shot,info-circle,/lessons/core-prompting-techniques/one-shot,""
+02D,Core Prompting Techniques,Few Shot,core-prompting-techniques/few-shot,info-circle,/lessons/core-prompting-techniques/few-shot,""
+02E,Core Prompting Techniques,Context Placement,core-prompting-techniques/context-placement,info-circle,/lessons/core-prompting-techniques/context-placement,""
+03A,Advanced Prompting Techniques,Structured Output,advanced-prompting-techniques/structured-output,info-circle,/lessons/advanced-prompting-techniques/structured-output,""
+03B,Advanced Prompting Techniques,Chain of Thought,advanced-prompting-techniques/chain-of-thought,info-circle,/lessons/advanced-prompting-techniques/chain-of-thought,""
+03C,Advanced Prompting Techniques,Delimiters,advanced-prompting-techniques/delimiters,info-circle,/lessons/advanced-prompting-techniques/delimiters,""
+03D,Advanced Prompting Techniques,Personas,advanced-prompting-techniques/personas,info-circle,/lessons/advanced-prompting-techniques/personas,""
